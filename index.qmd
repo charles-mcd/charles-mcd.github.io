@@ -1,7 +1,7 @@
 ---
 title: "Charlie McDermott"
 subtitle: "Health data scientist · Oxford"
-image: profile.jpg   # TODO: add a square-ish headshot called profile.jpg to this folder
+image: profile.jpg
 about:
   template: trestles
   image-shape: round
@@ -12,12 +12,12 @@ about:
       href: mailto:TODO@example.com
     - icon: github
       text: GitHub
-      href: https://github.com/YOUR-GITHUB-USERNAME
+      href: https://github.com/charles-mcd
     - icon: linkedin
       text: LinkedIn
-      href: https://www.linkedin.com/in/YOUR-LINKEDIN-SLUG
+      href: https://www.linkedin.com/in/charlie-mcdermott/
     - text: ORCID
-      href: https://orcid.org/TODO
+      href: https://orcid.org/0000-0002-7650-6740
 ---
 
 I build clinical prediction models that can be checked: properly evaluated,
@@ -44,7 +44,7 @@ conditions
 
 ## Education and recognition
 
-**MSc Computer Science with Artificial Intelligence**, TODO University, 2026
+**MSc Computer Science with Artificial Intelligence**, University of York, 2026
 <!-- TODO: remove "awaiting ratification" after October 2026 -->
 (awaiting ratification, October 2026)
 
