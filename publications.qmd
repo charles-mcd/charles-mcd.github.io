@@ -1,0 +1,17 @@
+---
+title: "Publications"
+---
+
+## Peer-reviewed
+
+TODO Authors. TODO Title. *BMJ Simulation & Technology Enhanced Learning*.
+TODO year. [doi:TODO](https://doi.org/TODO)
+
+## Preprints
+
+<!-- TODO: add the thesis preprint once it has a DOI -->
+*Forthcoming.*
+
+## Talks and awards
+
+TODO: ASPiH 2018 — award name and title of the presented work.

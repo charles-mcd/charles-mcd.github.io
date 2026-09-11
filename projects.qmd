@@ -1,0 +1,40 @@
+---
+title: "Projects"
+---
+
+## Temporal structure and duration of actigraphy in ADHD prediction
+
+*MSc thesis, 2026*
+
+<!-- TODO: opening question inferred from the thesis title; reword to match what the thesis actually asked -->
+
+How much accelerometry data do you need to predict ADHD, and does the way
+activity is distributed across the day matter more than the total amount?
+Using the Millennium Cohort Study (validated sample N = 5,033; more than 170
+million data points), this project compares interpretable and complex machine
+learning models, reports AUPRC alongside AUROC, examines calibration under low
+outcome prevalence, and runs subgroup analyses to check for algorithmic bias.
+Reported following TRIPOD+AI.
+
+<!-- TODO: add links as each artefact exists; delete the ones that don't yet -->
+[Code](https://github.com/YOUR-GITHUB-USERNAME/TODO-REPO) ·
+[Preprint](TODO) ·
+[Archived code (Zenodo DOI)](TODO)
+
+The Millennium Cohort Study data are available to registered users through the
+UK Data Service and are not included in the repository. The pipeline runs end
+to end on synthetic data so that it can be tested without access.
+
+<!--
+## MIMIC-IV project (uncomment when the OSF pre-registration is public)
+
+*In progress, 2026*
+
+One-paragraph summary: question, cohort, what is being evaluated.
+
+[Pre-registration (OSF)](TODO) · [Code](TODO)
+-->
+
+## Freelance work
+
+Web design and build for a graphic design practice: [TODO site name](TODO-url).

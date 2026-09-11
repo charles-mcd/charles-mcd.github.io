@@ -1,0 +1,33 @@
+# Site configuration. Replace YOUR-GITHUB-USERNAME and YOUR-LINKEDIN-SLUG
+# throughout (search the whole folder for "YOUR-" and "TODO").
+project:
+  type: website
+
+website:
+  title: "Charlie McDermott"
+  site-url: https://YOUR-GITHUB-USERNAME.github.io
+  description: "Health data science: trustworthy, reproducible clinical prediction modelling."
+  navbar:
+    left:
+      - href: index.qmd
+        text: About
+      - href: projects.qmd
+        text: Projects
+      - href: publications.qmd
+        text: Publications
+    right:
+      - icon: github
+        href: https://github.com/YOUR-GITHUB-USERNAME
+        aria-label: GitHub
+      - icon: linkedin
+        href: https://www.linkedin.com/in/YOUR-LINKEDIN-SLUG
+        aria-label: LinkedIn
+  page-footer:
+    left: "© 2026 Charlie McDermott"
+    right: "Built with [Quarto](https://quarto.org)"
+
+format:
+  html:
+    theme: cosmo
+    toc: false
+    smooth-scroll: true

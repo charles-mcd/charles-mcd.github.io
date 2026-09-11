@@ -1,0 +1,55 @@
+---
+title: "Charlie McDermott"
+subtitle: "Health data scientist · Oxford"
+image: profile.jpg   # TODO: add a square-ish headshot called profile.jpg to this folder
+about:
+  template: trestles
+  image-shape: round
+  image-width: 14em
+  links:
+    - icon: envelope
+      text: Email
+      href: mailto:TODO@example.com
+    - icon: github
+      text: GitHub
+      href: https://github.com/YOUR-GITHUB-USERNAME
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/YOUR-LINKEDIN-SLUG
+    - text: ORCID
+      href: https://orcid.org/TODO
+---
+
+I build clinical prediction models that can be checked: properly evaluated,
+calibrated, audited for how they perform across different patient groups, and
+reported transparently enough that someone else can reproduce them. I write
+my analyses as reproducible pipelines in line with the NHS Reproducible
+Analytical Pipelines (RAP) approach and publish the code.
+
+Before moving into data science I spent eight years at OxSTaR, the simulation
+and training centre at the John Radcliffe Hospital in Oxford, building the data
+systems and technology behind clinical training. I have run an independent
+consultancy since 2012.
+
+My MSc thesis used accelerometry data from the Millennium Cohort Study to
+examine how the duration and temporal structure of activity recordings affect
+ADHD prediction, comparing interpretable and complex models and testing for
+bias across subgroups. See [Projects](projects.qmd).
+
+## Interests
+
+Clinical prediction modelling · Model evaluation and calibration ·
+Algorithmic fairness · Reproducible analytical pipelines · Neurodevelopmental
+conditions
+
+## Education and recognition
+
+**MSc Computer Science with Artificial Intelligence**, TODO University, 2026
+<!-- TODO: remove "awaiting ratification" after October 2026 -->
+(awaiting ratification, October 2026)
+
+**TODO: undergraduate degree**, TODO University, TODO year
+
+**Registered Scientist (RSci)**, Science Council
+
+**ASPiH 2018 award**, TODO: exact award name
