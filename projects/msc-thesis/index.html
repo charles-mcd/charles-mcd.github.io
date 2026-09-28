@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-07-07">
+<meta name="description" content="Fair and Interpretable machine learning on 171 million accelerometer readings and parent-questionnaire responses from the Millennium Cohort Study (MCS). MSc thesis, distinction (80/100).">
+
+<title>Actigraphy and ADHD prediction – Charlie McDermott</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-172ba59bd5e0b52282274ba0c0cc16fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Charlie McDermott</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../publications.html"> 
+<span class="menu-text">Publications</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/charles-mcd"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/charlie-mcdermott/"> <i class="bi bi-linkedin" role="img" aria-label="LinkedIn">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Actigraphy and ADHD prediction</h1>
+<p class="subtitle lead">Temporal structure and duration of activity monitoring in large UK cohort</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">clinical prediction</div>
+    <div class="quarto-category">machine learning</div>
+    <div class="quarto-category">time series</div>
+    <div class="quarto-category">Python</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Fair and Interpretable machine learning on 171 million accelerometer readings and parent-questionnaire responses from the Millennium Cohort Study (MCS). MSc thesis, distinction (80/100).
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">July 7, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Attention-Deficit Hyperactivity Disorder (ADHD) prediction has the potential to unlock solutions to the UK’s under-diagnosis crisis, realising health benefits and social opportunities for those stuck on waiting lists. A gap exists to test whether biomarkers from activity data — intra-daily and weekly temporal factors — can predict ADHD beyond the small convenience samples and opaque modelling approaches currently limiting transition of prediction technologies into clinical practice. This study addresses these limitations with interpretable, fair modelling on large-cohort MCS data, and reports on optimal activity monitoring durations, key for real-world application.</p>
+<p>Built against the NHS RAP maturity framework: Baseline, with most of Silver in place. See Code README for full criteria.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>MSc Computer Science with Artificial Intelligence</strong>, University of York, 2026. Awarded 80, double-marked.</p>
+<p>5,033 children · 171.6 million accelerometer data points · reported to TRIPOD+AI</p>
+<p><a href="thesis.pdf">Thesis (PDF)</a> · <a href="https://github.com/charles-mcd/predict-adhd">Code</a></p>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A[MCS survey files&lt;br/&gt;4 sweeps] --&gt; C[Labels, covariates,&lt;br/&gt;exclusions]
+    B[Raw accelerometer&lt;br/&gt;.dat files] --&gt; D[Non-wear flagging,&lt;br/&gt;day alignment]
+    D --&gt; E[tsfresh features&lt;br/&gt;per valid day]
+    C --&gt; F[Feature selection]
+    E --&gt; F
+    F --&gt; G[Model comparison,&lt;br/&gt;tuning]
+    G --&gt; H[Evaluation, subgroups,&lt;br/&gt;monitoring duration]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>The analysis described below is the thesis as submitted, tagged <a href="https://github.com/charles-mcd/predict-adhd/tree/v1.0.0">v1.0.0</a>. <a href="#sec-v2">Version 2</a> at the end describes subsequent improvements to the pipeline as part of iterative, on-going code review.</p>
+<section id="data-extraction" class="level2">
+<h2 class="anchored" data-anchor-id="data-extraction">1. Data extraction</h2>
+<blockquote class="blockquote">
+<p>Secondary data is sourced from the MCS via the UK Data Service. The MCS conducts longitudinal research on 18,827 children born around the millennium, collecting sweeps of observations, questionnaire and interview data every 2-3 years. Natural-setting activity data was collected for 7 days at age-7 with a waist-worn, non-invasive GT1M actigraph.</p>
+</blockquote>
+<p>Survey data came as Stata files, differences between how Stata and pandas handle category naming required parsing:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>extract.py</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-filename="extract.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> drop_bad_cats(path, bad_cols):</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Parse .stata data into pandas.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Stata allows duplicate categorical labels, pandas throws an error. This</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">    function drops the offending columns, extracts cat labels and reapplys</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">    them in pandas.</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> pd.io.stata.StataReader(path) <span class="im">as</span> reader:</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        df <span class="op">=</span> reader.read(convert_categoricals<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        value_labels <span class="op">=</span> reader.value_labels()</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df.drop(columns<span class="op">=</span>bad_cols, errors<span class="op">=</span><span class="st">"ignore"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> col, labels <span class="kw">in</span> value_labels.items():</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> col <span class="kw">not</span> <span class="kw">in</span> df.columns <span class="kw">or</span> col <span class="kw">in</span> bad_cols:</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># skip columns whose labels are not unique</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(<span class="bu">set</span>(labels.values())) <span class="op">!=</span> <span class="bu">len</span>(labels.values()):</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        df[col] <span class="op">=</span> pd.Categorical(df[col].<span class="bu">map</span>(labels).fillna(df[col]))</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Extraction summary:</strong></p>
+<ul>
+<li>class labels operationliased from any ADHD diagnosis reported across the four sweeps (ages 5, 7, 11, 14)</li>
+<li>covariates joined from four more files, each with its own ID scheme</li>
+<li>exclusions for confounders: autism, limited fitness, ADHD medication started before activity measurements</li>
+<li>171.6 million 15-second epochs from raw <code>.dat</code> files, processed in chunks on a 40GB machine; tsfresh extraction ran around 15 hours</li>
+<li>the whole pipeline reruns from source with two commands</li>
+</ul>
+</section>
+<section id="preprocessing-algorithms" class="level2">
+<h2 class="anchored" data-anchor-id="preprocessing-algorithms">2. Preprocessing algorithms</h2>
+<blockquote class="blockquote">
+<p>The raw timeseries data provides counts every 15 seconds and therefore appropriate for far more granular analysis of within-day features. However, in order to process this data it needed to be mapped to the valid and reliable sample first, this required development of two algorithms. The first applied a non-wear marker to each participant’s timeseries data, based on the same rules used by MCS to remain consistent. The second determined how many days offset the timeseries were from the first recorded valid day.</p>
+</blockquote>
+<p>Non-wear is defined as 80 or more consecutive zero-count epochs. Finding every such run across millions of rows would be costly using loops, a vectorised algorithm was desinged instead:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>timeseries.py</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-filename="timeseries.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># flag for non-wear time: &gt;=80 consecutive 0s</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> df.iloc[:, <span class="dv">0</span>].eq(<span class="dv">0</span>)                              <span class="co"># boolean for zero count</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>groups <span class="op">=</span> s.ne(s.shift()).cumsum()                    <span class="co"># groups for consec. true/false runs</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>run_lengths <span class="op">=</span> s.groupby(groups).transform(<span class="st">'size'</span>)    <span class="co"># broadcast run length back to rows</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"NW_flag"</span>] <span class="op">=</span> (s <span class="op">&amp;</span> (run_lengths <span class="op">&gt;=</span> NON_WEAR_RUN))  <span class="co"># flag rows 80+ zero-run</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Preprocessing summary:</strong></p>
+<ul>
+<li>tabular data - survey responses and activity aggregates used to engineer handcrafted features - were cleaned, merged and processed into a valid sample based on inclusion and exclusion criteria</li>
+<li>the offset algorithm aligns the timeseries data to the valid sample by sliding a day-length window along the recording until window wear-time statistics match the MCS record for the first valid day</li>
+<li>where it could not match (0.2% of recordings), the participant was dropped. The effect of excluded data were analysed for sample bias by monitoring changes to class and covariate distributions</li>
+</ul>
+</section>
+<section id="feature-selection" class="level2">
+<h2 class="anchored" data-anchor-id="feature-selection">3. Feature selection</h2>
+<blockquote class="blockquote">
+<p>The large generic output of tsfresh is then subjected to a series of feature reduction methods to mitigate known problems for high-dimensional datasets. Features are then selected for consistently ranking well across a range of methods based on mutual information, f-scoring, regularised logistic regressors and extra trees. This range prevents any particular method dominating and applies broad assessment of feature importance.</p>
+</blockquote>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>selection.py</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-filename="selection.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># feature consensus across selection methods</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>selected_sets <span class="op">=</span> {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    name: <span class="bu">set</span>(vals)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> name, vals <span class="kw">in</span> selected_features.items()</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>all_selected <span class="op">=</span> <span class="bu">sorted</span>(<span class="bu">set</span>().union(<span class="op">*</span>selected_sets.values()))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>selection_matrix <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    name: [feature <span class="kw">in</span> selected_sets[name] <span class="cf">for</span> feature <span class="kw">in</span> all_selected]</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> name <span class="kw">in</span> selected_sets</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>}, index<span class="op">=</span>all_selected)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>selection_matrix[<span class="st">"n_methods"</span>] <span class="op">=</span> selection_matrix.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<blockquote class="blockquote">
+<p>The most selected features by far are frequency and spectral-based such as Fourier derivations which reflect periods, oscillations and rhythms. Interestingly, the least prominent selected include the simpler sum/magnitude features most closely related to the handcrafted features.</p>
+</blockquote>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Feature family</th>
+<th style="text-align: right;">Selected</th>
+<th style="text-align: right;">Share of model weight</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Frequency / spectral structure</td>
+<td style="text-align: right;">354</td>
+<td style="text-align: right;">83.8%</td>
+</tr>
+<tr class="even">
+<td>Change, variability, sequence</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">4.6%</td>
+</tr>
+<tr class="odd">
+<td>Distribution, extremes, bursts</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">3.9%</td>
+</tr>
+<tr class="even">
+<td>Timing, trend, energy location</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">3.8%</td>
+</tr>
+<tr class="odd">
+<td>Temporal dependence, stationarity</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">2.4%</td>
+</tr>
+<tr class="even">
+<td>Complexity / entropy</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.6%</td>
+</tr>
+<tr class="odd">
+<td>Simple activity volume / magnitude</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0.4%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Feature selection summary:</strong></p>
+<ul>
+<li>1,554 candidate features to 442, keeping only those at least two methods agreed on</li>
+<li>selection matrix doubles as an audit trail: which method kept what</li>
+<li>interpretability: grouping 442 coefficients into families provides relevant clinical insights</li>
+<li>weekday and weekend features are selected with equal importance (222 and 220), evidencing RQ2</li>
+</ul>
+</section>
+<section id="evaluation" class="level2">
+<h2 class="anchored" data-anchor-id="evaluation">4. Evaluation</h2>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="roc_curve.png" class="img-fluid figure-img"></p>
+<figcaption>ROC curve</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="pr_curve.png" class="img-fluid figure-img"></p>
+<figcaption>Precision-recall curve</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>Logistic Regression consistently outperformed Naïve Bayes and Extra Trees in all conditions with the selected tsfresh-stratified features and across all metrics. Final scoring achieved AUROC 0.846 and AUPRC 5.9x baseline. Note the low precision scores reflecting high false positives, information that is absent from ROC analysis alone.</p>
+</blockquote>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="predicted_probs.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>Participants ranked by predicted probability</figcaption>
+</figure>
+</div>
+<p><strong>Evaluation summary:</strong></p>
+<ul>
+<li>AUROC alone provides a threshold-agnostic score of how well the model ranks class, secondary metrics include AUPRC able to account for low class prevalence (1.8%) by revealing low precision scores</li>
+<li>threshold analysis reveals the sensitivity/specificity trade-off:
+<ul>
+<li>the screening case: optimise for <strong>sensitivity</strong>, maximise true positives e.g.&nbsp;to send families on waiting lists information and support, where a false positive costs little</li>
+<li>the diagnostic case: optmise for <strong>specificity</strong>, minimise false positives e.g.&nbsp;to diagnose and start treatment, where a false positive is costly</li>
+</ul></li>
+</ul>
+</section>
+<section id="subgroups-and-calibration" class="level2">
+<h2 class="anchored" data-anchor-id="subgroups-and-calibration">5. Subgroups and calibration</h2>
+<blockquote class="blockquote">
+<p>Algorithmic bias defines systematic errors due to biases in data, labels or modelling; even interpretable approaches are susceptible where healthy performance metrics on the whole dataset may belie performance discriminations between subgroups, potentially compounding existing inequalities.</p>
+</blockquote>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="subgroup_calibration.png" class="img-fluid figure-img" style="width:60.0%"></p>
+<figcaption>Calibration by sex</figcaption>
+</figure>
+</div>
+<!-- FIGURE: subgroup_calibration.png -->
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Group</th>
+<th style="text-align: right;">Prevalence</th>
+<th style="text-align: right;">AUROC</th>
+<th style="text-align: right;">Brier</th>
+<th style="text-align: right;">Calibration slope</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>All</td>
+<td style="text-align: right;">1.8%</td>
+<td style="text-align: right;">0.834</td>
+<td style="text-align: right;">0.035</td>
+<td style="text-align: right;">0.299</td>
+</tr>
+<tr class="even">
+<td>Female</td>
+<td style="text-align: right;">0.9%</td>
+<td style="text-align: right;">0.881</td>
+<td style="text-align: right;">0.023</td>
+<td style="text-align: right;">0.319</td>
+</tr>
+<tr class="odd">
+<td>Male</td>
+<td style="text-align: right;">2.7%</td>
+<td style="text-align: right;">0.799</td>
+<td style="text-align: right;">0.049</td>
+<td style="text-align: right;">0.275</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p>The analysis reveals broadly comparable subgroup performance, with imbalance seen in higher female ranking metrics but also unstable due to prevalence. The model’s probabilities are substantially under-scaled and thus do not represent actual risk.</p>
+</blockquote>
+<p><strong>Subgroup summary:</strong></p>
+<ul>
+<li>ethnicity could not be analysed: 10 &gt; non-white positive cases, despite MCS oversampling</li>
+<li>the model ranks well, however this analysis reveals miscalibrated probabilities at the individual level, prompting recalibration methods as future work</li>
+<li>analysing subgroups responds to the TRIPOD+AI framework for transparent and fair data processing and reporting</li>
+</ul>
+</section>
+<section id="significance-tests-guiding-recommendations" class="level2">
+<h2 class="anchored" data-anchor-id="significance-tests-guiding-recommendations">6. Significance tests guiding recommendations</h2>
+<blockquote class="blockquote">
+<p>To compare monitoring period durations, participants with at least six valid days monitoring were selected. Differences in AUROC and AUPRC between each reduced duration and the 6-day reference condition were assessed using paired bootstrap resampling, appropriate for non-independent samples.</p>
+</blockquote>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>evaluate.py</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-filename="evaluate.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># paired bootstrap</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>boot_rows <span class="op">=</span> []</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">42</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>duration_cols <span class="op">=</span> {<span class="dv">2</span>: <span class="st">"probs_2"</span>, <span class="dv">3</span>: <span class="st">"probs_3"</span>, <span class="dv">4</span>: <span class="st">"probs_4"</span>, <span class="dv">5</span>: <span class="st">"probs_5"</span>, <span class="dv">6</span>: <span class="st">"probs_6"</span>}</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_boot):</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    sample <span class="op">=</span> preds.iloc[rng.integers(<span class="dv">0</span>, <span class="bu">len</span>(preds), <span class="bu">len</span>(preds))]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> sample[<span class="st">"y"</span>].nunique() <span class="op">&lt;</span> <span class="dv">2</span>:</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> days, col <span class="kw">in</span> duration_cols.items():</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        boot_rows.append({<span class="st">"days"</span>: days, <span class="op">**</span>metrics(sample, col)})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="duration_auroc.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<figcaption>AUROC by monitoring duration</figcaption>
+</figure>
+</div>
+<blockquote class="blockquote">
+<p>Performance improved monotonically across AUROC, AUPRC and Spearman metrics as duration increased. 2- and 3-day durations were both substantially lower than the 6-day reference, found to be significant with p-values &lt; 0.001. 5 days produced near-equivalent performance and was found to not be significantly different.</p>
+</blockquote>
+<p><strong>Conclusions:</strong></p>
+<ul>
+<li>Holm adjusted p-values on bootstrap resampling show significantly worse prediction power for 2 and 3 day monitoring durations, recommending at least 5 days of activity monitoring for reliable AUROC</li>
+<li>using these techniques, observed patient data produced real-world recommendations for monitoring periods and data collection protocols, with implications for planning costs and minimising wear-time for children who may have sensitivities/wear-compliance issues</li>
+<li>In addition, further research into ADHD actigraphy can realise weekday/weekend and intra-daily differences found to be important in differentiating the condition, and apply fair and interpretable methods to acheive this</li>
+</ul>
+</section>
+<section id="sec-v2" class="level2">
+<h2 class="anchored" data-anchor-id="sec-v2">Version 2: iterative improvement</h2>
+<!-- Link targets: tag v2.0.0 and the compare view between the tags. -->
+<p>After submission I reviewed the pipeline and made changes below, released as <a href="https://github.com/charles-mcd/predict-adhd/tree/v2.0.0">v2.0.0</a>. The full difference is readable <a href="https://github.com/charles-mcd/predict-adhd/compare/v1.0.0...v2.0.0">side by side</a>.</p>
+<p><strong>Consensus selection within cross-validation folds</strong></p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>selection.py</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" data-filename="selection.py"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ConsensusSelector(SelectorMixin, BaseEstimator):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Second pass consensus as a transformer, fitted on training folds only."""</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, selectors, n_consensus<span class="op">=</span>N_CONSENSUS):</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.selectors <span class="op">=</span> selectors</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.n_consensus <span class="op">=</span> n_consensus</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> fit(<span class="va">self</span>, X, y):</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        votes <span class="op">=</span> np.zeros(X.shape[<span class="dv">1</span>], dtype<span class="op">=</span><span class="bu">int</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> selector <span class="kw">in</span> <span class="va">self</span>.selectors.values():</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>            votes <span class="op">+=</span> clone(selector).fit(X, y).get_support().astype(<span class="bu">int</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.votes_ <span class="op">=</span> votes</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.support_ <span class="op">=</span> votes <span class="op">&gt;=</span> <span class="va">self</span>.n_consensus</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.n_features_in_ <span class="op">=</span> X.shape[<span class="dv">1</span>]</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _get_support_mask(<span class="va">self</span>):</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.support_</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Updates:</strong></p>
+<ul>
+<li><strong>consensus feature selection</strong> now runs inside each training fold, wrapped in a scikit-learn transformer, reducing the potential for leakage from held-out data and following the method already implemented for small-set selection</li>
+<li><strong>subgroup bootstrapping</strong> gives an interval for AUROC scoring, improving precision by measuring stability given the low prevalence rate, compounded by splitting unbalanced subgroups, i.e.&nbsp;only 22 positive class females</li>
+<li><strong>subgroup testing</strong> now uses corrected resampled t-test (Nadeau &amp; Bengio, 2003) to account for non-independence between cross-validation folds and repeats</li>
+<li><strong>calibration intercept</strong> fitted with the slope held at 1 (Van Calster et al., 2019), and the subgroup audit run on the final model’s own predictions</li>
+</ul>
+<!-- v2.1.0: pytest section once the tests are added. -->
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/charles-mcd\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2026 Charlie McDermott</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org">Quarto</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

@@ -1,0 +1,156 @@
+[
+  {
+    "objectID": "publications.html",
+    "href": "publications.html",
+    "title": "Publications",
+    "section": "",
+    "text": "C McDermott et al. Taming ‘biggish’ data. BMJ Stel In Practice reports. 2019. doi: 10.1136/bmjstel-2019-000441"
+  },
+  {
+    "objectID": "publications.html#peer-reviewed",
+    "href": "publications.html#peer-reviewed",
+    "title": "Publications",
+    "section": "",
+    "text": "C McDermott et al. Taming ‘biggish’ data. BMJ Stel In Practice reports. 2019. doi: 10.1136/bmjstel-2019-000441"
+  },
+  {
+    "objectID": "publications.html#science-writing",
+    "href": "publications.html#science-writing",
+    "title": "Publications",
+    "section": "Science writing",
+    "text": "Science writing\nArticles for BioNews, published by the Progress Educational Trust, covering developments in genetics, stem cell research and reproductive medicine for a general readership (2010)."
+  },
+  {
+    "objectID": "publications.html#thesis",
+    "href": "publications.html#thesis",
+    "title": "Publications",
+    "section": "Thesis",
+    "text": "Thesis\nMcDermott, C. (2026). Impact of Temporal Structure and Duration of Actigraphy on ADHD Prediction with Fair and Interpretable Machine Learning. MSc Computer Science with Artificial Intelligence, University of York.\nMachine learning on accelerometry from 5,033 children in the Millennium Cohort Study, testing whether intra-daily and weekly activity patterns predict ADHD, and how many days of monitoring are needed. Awarded 80.\nFull thesis (PDF) · Project write-up · Code"
+  },
+  {
+    "objectID": "publications.html#talks-and-workshops",
+    "href": "publications.html#talks-and-workshops",
+    "title": "Publications",
+    "section": "Talks and workshops",
+    "text": "Talks and workshops\nTaming ‘biggish’ data ASPiH National Conference, 2018. Winner, Best in Technology award.\nVirtual Virtuoso: Online Workspaces Workshop, OxSTaR, 2021.\nVirtual Reality for Surgical Training Workshop, Department for Continuing Education, University of Oxford, 2022."
+  },
+  {
+    "objectID": "projects/web-dev/index.html",
+    "href": "projects/web-dev/index.html",
+    "title": "Web development and analytics",
+    "section": "",
+    "text": "Examples being gathered.\n\n\n\nWeb work delivered through my consultancy since 2012, running alongside the NHS and research work. Clients have included university departments, NHS services, third sector organisations and commercial businesses, in the UK and internationally.\nWhat this will cover:\n\nsites built and maintained, from brochure sites to bespoke functionality\nanalytics implementation, and the reporting built on top of it\nturning site statistics into something a non-technical client can act on\n\nClient dashboards are reproduced here with dummy figures."
+  },
+  {
+    "objectID": "projects/pop-health/index.html",
+    "href": "projects/pop-health/index.html",
+    "title": "Do health and wellbeing measures agree?",
+    "section": "",
+    "text": "In progress. Data access being arranged through the UK Data Service.\n\n\n\nHealth and wellbeing outcome measures are used to compare treatments and to inform how health budgets are allocated. Several established instruments exist, and they do not always agree with each other about the same person. Where mapping functions convert between them, those functions are usually estimated on one survey sample and then applied elsewhere.\nThis project uses the SIPHER-HWMIC survey, which asked over 12,000 UK adults the questions from eight different health and wellbeing instruments, across three separate survey panels.\nWhat the project will involve:\n\ncomparing scores from several preference-based instruments for the same respondents\ntesting whether mapping between instruments holds when trained on one survey panel and applied to another\nreporting calibration as well as fit, the external-validation approach standard in clinical prediction modelling but uncommon in this literature\nexamining whether disagreement between instruments varies systematically by age, sex, socioeconomic position or health status\nhandling documented data quality problems in the survey and reporting to the MAPS statement, the mapping literature’s own reporting standard"
+  },
+  {
+    "objectID": "projects/msc-thesis/index.html",
+    "href": "projects/msc-thesis/index.html",
+    "title": "Actigraphy and ADHD prediction",
+    "section": "",
+    "text": "Attention-Deficit Hyperactivity Disorder (ADHD) prediction has the potential to unlock solutions to the UK’s under-diagnosis crisis, realising health benefits and social opportunities for those stuck on waiting lists. A gap exists to test whether biomarkers from activity data — intra-daily and weekly temporal factors — can predict ADHD beyond the small convenience samples and opaque modelling approaches currently limiting transition of prediction technologies into clinical practice. This study addresses these limitations with interpretable, fair modelling on large-cohort MCS data, and reports on optimal activity monitoring durations, key for real-world application.\nBuilt against the NHS RAP maturity framework: Baseline, with most of Silver in place. See Code README for full criteria.\nflowchart LR\n    A[MCS survey files&lt;br/&gt;4 sweeps] --&gt; C[Labels, covariates,&lt;br/&gt;exclusions]\n    B[Raw accelerometer&lt;br/&gt;.dat files] --&gt; D[Non-wear flagging,&lt;br/&gt;day alignment]\n    D --&gt; E[tsfresh features&lt;br/&gt;per valid day]\n    C --&gt; F[Feature selection]\n    E --&gt; F\n    F --&gt; G[Model comparison,&lt;br/&gt;tuning]\n    G --&gt; H[Evaluation, subgroups,&lt;br/&gt;monitoring duration]\nThe analysis described below is the thesis as submitted, tagged v1.0.0. Version 2 at the end describes subsequent improvements to the pipeline as part of iterative, on-going code review."
+  },
+  {
+    "objectID": "projects/msc-thesis/index.html#data-extraction",
+    "href": "projects/msc-thesis/index.html#data-extraction",
+    "title": "Actigraphy and ADHD prediction",
+    "section": "1. Data extraction",
+    "text": "1. Data extraction\n\nSecondary data is sourced from the MCS via the UK Data Service. The MCS conducts longitudinal research on 18,827 children born around the millennium, collecting sweeps of observations, questionnaire and interview data every 2-3 years. Natural-setting activity data was collected for 7 days at age-7 with a waist-worn, non-invasive GT1M actigraph.\n\nSurvey data came as Stata files, differences between how Stata and pandas handle category naming required parsing:\n\n\nextract.py\n\ndef drop_bad_cats(path, bad_cols):\n    \"\"\"Parse .stata data into pandas.\n\n    Stata allows duplicate categorical labels, pandas throws an error. This\n    function drops the offending columns, extracts cat labels and reapplys\n    them in pandas.\n    \"\"\"\n    with pd.io.stata.StataReader(path) as reader:\n        df = reader.read(convert_categoricals=False)\n        value_labels = reader.value_labels()\n\n    df = df.drop(columns=bad_cols, errors=\"ignore\")\n\n    for col, labels in value_labels.items():\n        if col not in df.columns or col in bad_cols:\n            continue\n\n        # skip columns whose labels are not unique\n        if len(set(labels.values())) != len(labels.values()):\n            continue\n\n        df[col] = pd.Categorical(df[col].map(labels).fillna(df[col]))\n\n    return df\n\nExtraction summary:\n\nclass labels operationliased from any ADHD diagnosis reported across the four sweeps (ages 5, 7, 11, 14)\ncovariates joined from four more files, each with its own ID scheme\nexclusions for confounders: autism, limited fitness, ADHD medication started before activity measurements\n171.6 million 15-second epochs from raw .dat files, processed in chunks on a 40GB machine; tsfresh extraction ran around 15 hours\nthe whole pipeline reruns from source with two commands"
+  },
+  {
+    "objectID": "projects/msc-thesis/index.html#preprocessing-algorithms",
+    "href": "projects/msc-thesis/index.html#preprocessing-algorithms",
+    "title": "Actigraphy and ADHD prediction",
+    "section": "2. Preprocessing algorithms",
+    "text": "2. Preprocessing algorithms\n\nThe raw timeseries data provides counts every 15 seconds and therefore appropriate for far more granular analysis of within-day features. However, in order to process this data it needed to be mapped to the valid and reliable sample first, this required development of two algorithms. The first applied a non-wear marker to each participant’s timeseries data, based on the same rules used by MCS to remain consistent. The second determined how many days offset the timeseries were from the first recorded valid day.\n\nNon-wear is defined as 80 or more consecutive zero-count epochs. Finding every such run across millions of rows would be costly using loops, a vectorised algorithm was desinged instead:\n\n\ntimeseries.py\n\n# flag for non-wear time: &gt;=80 consecutive 0s\ns = df.iloc[:, 0].eq(0)                              # boolean for zero count\ngroups = s.ne(s.shift()).cumsum()                    # groups for consec. true/false runs\nrun_lengths = s.groupby(groups).transform('size')    # broadcast run length back to rows\ndf[\"NW_flag\"] = (s & (run_lengths &gt;= NON_WEAR_RUN))  # flag rows 80+ zero-run\n\nPreprocessing summary:\n\ntabular data - survey responses and activity aggregates used to engineer handcrafted features - were cleaned, merged and processed into a valid sample based on inclusion and exclusion criteria\nthe offset algorithm aligns the timeseries data to the valid sample by sliding a day-length window along the recording until window wear-time statistics match the MCS record for the first valid day\nwhere it could not match (0.2% of recordings), the participant was dropped. The effect of excluded data were analysed for sample bias by monitoring changes to class and covariate distributions"
+  },
+  {
+    "objectID": "projects/msc-thesis/index.html#feature-selection",
+    "href": "projects/msc-thesis/index.html#feature-selection",
+    "title": "Actigraphy and ADHD prediction",
+    "section": "3. Feature selection",
+    "text": "3. Feature selection\n\nThe large generic output of tsfresh is then subjected to a series of feature reduction methods to mitigate known problems for high-dimensional datasets. Features are then selected for consistently ranking well across a range of methods based on mutual information, f-scoring, regularised logistic regressors and extra trees. This range prevents any particular method dominating and applies broad assessment of feature importance.\n\n\n\nselection.py\n\n# feature consensus across selection methods\nselected_sets = {\n    name: set(vals)\n    for name, vals in selected_features.items()\n}\n\nall_selected = sorted(set().union(*selected_sets.values()))\n\nselection_matrix = pd.DataFrame({\n    name: [feature in selected_sets[name] for feature in all_selected]\n    for name in selected_sets\n}, index=all_selected)\n\nselection_matrix[\"n_methods\"] = selection_matrix.sum(axis=1)\n\n\nThe most selected features by far are frequency and spectral-based such as Fourier derivations which reflect periods, oscillations and rhythms. Interestingly, the least prominent selected include the simpler sum/magnitude features most closely related to the handcrafted features.\n\n\n\n\nFeature family\nSelected\nShare of model weight\n\n\n\n\nFrequency / spectral structure\n354\n83.8%\n\n\nChange, variability, sequence\n28\n4.6%\n\n\nDistribution, extremes, bursts\n15\n3.9%\n\n\nTiming, trend, energy location\n19\n3.8%\n\n\nTemporal dependence, stationarity\n13\n2.4%\n\n\nComplexity / entropy\n5\n0.6%\n\n\nSimple activity volume / magnitude\n7\n0.4%\n\n\n\nFeature selection summary:\n\n1,554 candidate features to 442, keeping only those at least two methods agreed on\nselection matrix doubles as an audit trail: which method kept what\ninterpretability: grouping 442 coefficients into families provides relevant clinical insights\nweekday and weekend features are selected with equal importance (222 and 220), evidencing RQ2"
+  },
+  {
+    "objectID": "projects/msc-thesis/index.html#evaluation",
+    "href": "projects/msc-thesis/index.html#evaluation",
+    "title": "Actigraphy and ADHD prediction",
+    "section": "4. Evaluation",
+    "text": "4. Evaluation\n\n\n\n\n\n\nROC curve\n\n\n\n\n\n\n\nPrecision-recall curve\n\n\n\n\n\n\nLogistic Regression consistently outperformed Naïve Bayes and Extra Trees in all conditions with the selected tsfresh-stratified features and across all metrics. Final scoring achieved AUROC 0.846 and AUPRC 5.9x baseline. Note the low precision scores reflecting high false positives, information that is absent from ROC analysis alone.\n\n\n\n\nParticipants ranked by predicted probability\n\n\nEvaluation summary:\n\nAUROC alone provides a threshold-agnostic score of how well the model ranks class, secondary metrics include AUPRC able to account for low class prevalence (1.8%) by revealing low precision scores\nthreshold analysis reveals the sensitivity/specificity trade-off:\n\nthe screening case: optimise for sensitivity, maximise true positives e.g. to send families on waiting lists information and support, where a false positive costs little\nthe diagnostic case: optmise for specificity, minimise false positives e.g. to diagnose and start treatment, where a false positive is costly"
+  },
+  {
+    "objectID": "projects/msc-thesis/index.html#subgroups-and-calibration",
+    "href": "projects/msc-thesis/index.html#subgroups-and-calibration",
+    "title": "Actigraphy and ADHD prediction",
+    "section": "5. Subgroups and calibration",
+    "text": "5. Subgroups and calibration\n\nAlgorithmic bias defines systematic errors due to biases in data, labels or modelling; even interpretable approaches are susceptible where healthy performance metrics on the whole dataset may belie performance discriminations between subgroups, potentially compounding existing inequalities.\n\n\n\n\nCalibration by sex\n\n\n\n\n\n\nGroup\nPrevalence\nAUROC\nBrier\nCalibration slope\n\n\n\n\nAll\n1.8%\n0.834\n0.035\n0.299\n\n\nFemale\n0.9%\n0.881\n0.023\n0.319\n\n\nMale\n2.7%\n0.799\n0.049\n0.275\n\n\n\n\nThe analysis reveals broadly comparable subgroup performance, with imbalance seen in higher female ranking metrics but also unstable due to prevalence. The model’s probabilities are substantially under-scaled and thus do not represent actual risk.\n\nSubgroup summary:\n\nethnicity could not be analysed: 10 &gt; non-white positive cases, despite MCS oversampling\nthe model ranks well, however this analysis reveals miscalibrated probabilities at the individual level, prompting recalibration methods as future work\nanalysing subgroups responds to the TRIPOD+AI framework for transparent and fair data processing and reporting"
+  },
+  {
+    "objectID": "projects/msc-thesis/index.html#significance-tests-guiding-recommendations",
+    "href": "projects/msc-thesis/index.html#significance-tests-guiding-recommendations",
+    "title": "Actigraphy and ADHD prediction",
+    "section": "6. Significance tests guiding recommendations",
+    "text": "6. Significance tests guiding recommendations\n\nTo compare monitoring period durations, participants with at least six valid days monitoring were selected. Differences in AUROC and AUPRC between each reduced duration and the 6-day reference condition were assessed using paired bootstrap resampling, appropriate for non-independent samples.\n\n\n\nevaluate.py\n\n# paired bootstrap\nboot_rows = []\nrng = np.random.default_rng(42)\nduration_cols = {2: \"probs_2\", 3: \"probs_3\", 4: \"probs_4\", 5: \"probs_5\", 6: \"probs_6\"}\n\nfor _ in range(n_boot):\n    sample = preds.iloc[rng.integers(0, len(preds), len(preds))]\n\n    if sample[\"y\"].nunique() &lt; 2:\n        continue\n\n    for days, col in duration_cols.items():\n        boot_rows.append({\"days\": days, **metrics(sample, col)})\n\n\n\n\nAUROC by monitoring duration\n\n\n\nPerformance improved monotonically across AUROC, AUPRC and Spearman metrics as duration increased. 2- and 3-day durations were both substantially lower than the 6-day reference, found to be significant with p-values &lt; 0.001. 5 days produced near-equivalent performance and was found to not be significantly different.\n\nConclusions:\n\nHolm adjusted p-values on bootstrap resampling show significantly worse prediction power for 2 and 3 day monitoring durations, recommending at least 5 days of activity monitoring for reliable AUROC\nusing these techniques, observed patient data produced real-world recommendations for monitoring periods and data collection protocols, with implications for planning costs and minimising wear-time for children who may have sensitivities/wear-compliance issues\nIn addition, further research into ADHD actigraphy can realise weekday/weekend and intra-daily differences found to be important in differentiating the condition, and apply fair and interpretable methods to acheive this"
+  },
+  {
+    "objectID": "projects/msc-thesis/index.html#sec-v2",
+    "href": "projects/msc-thesis/index.html#sec-v2",
+    "title": "Actigraphy and ADHD prediction",
+    "section": "Version 2: iterative improvement",
+    "text": "Version 2: iterative improvement\n\nAfter submission I reviewed the pipeline and made changes below, released as v2.0.0. The full difference is readable side by side.\nConsensus selection within cross-validation folds\n\n\nselection.py\n\nclass ConsensusSelector(SelectorMixin, BaseEstimator):\n    \"\"\"Second pass consensus as a transformer, fitted on training folds only.\"\"\"\n\n    def __init__(self, selectors, n_consensus=N_CONSENSUS):\n        self.selectors = selectors\n        self.n_consensus = n_consensus\n\n    def fit(self, X, y):\n        votes = np.zeros(X.shape[1], dtype=int)\n\n        for selector in self.selectors.values():\n            votes += clone(selector).fit(X, y).get_support().astype(int)\n\n        self.votes_ = votes\n        self.support_ = votes &gt;= self.n_consensus\n        self.n_features_in_ = X.shape[1]\n        return self\n\n    def _get_support_mask(self):\n        return self.support_\n\nUpdates:\n\nconsensus feature selection now runs inside each training fold, wrapped in a scikit-learn transformer, reducing the potential for leakage from held-out data and following the method already implemented for small-set selection\nsubgroup bootstrapping gives an interval for AUROC scoring, improving precision by measuring stability given the low prevalence rate, compounded by splitting unbalanced subgroups, i.e. only 22 positive class females\nsubgroup testing now uses corrected resampled t-test (Nadeau & Bengio, 2003) to account for non-independence between cross-validation folds and repeats\ncalibration intercept fitted with the slope held at 1 (Van Calster et al., 2019), and the subgroup audit run on the final model’s own predictions"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Charlie McDermott",
+    "section": "",
+    "text": "I’m a health-focused data scientist with hands-on healthcare systems experience and an MSc in Computer Science with AI, focused on turning messy clinical data into equitable models and evidence. I write my analyses as reproducible pipelines in line with the NHS Reproducible Analytical Pipelines (RAP) approach and publish the code.\nBefore moving into data science I spent eight years at the University of Oxford’s simulation training and research centre at the John Radcliffe Hospital (NHS FT), building the data systems and technology behind clinical training. I have run an independent digital consultancy since 2012.\nMy MSc thesis used accelerometry data from the Millennium Cohort Study to examine how the duration and temporal structure of activity recordings affect ADHD prediction, comparing interpretable and complex models and testing for bias across subgroups. See Projects."
+  },
+  {
+    "objectID": "index.html#interests",
+    "href": "index.html#interests",
+    "title": "Charlie McDermott",
+    "section": "Interests",
+    "text": "Interests\nClinical prediction modelling · Model evaluation and calibration · Algorithmic fairness · Reproducible analytical pipelines · Neurodevelopmental conditions"
+  },
+  {
+    "objectID": "index.html#education-and-recognition",
+    "href": "index.html#education-and-recognition",
+    "title": "Charlie McDermott",
+    "section": "Education and recognition",
+    "text": "Education and recognition\nMSc Computer Science with Artificial Intelligence, University of York, 2026  (awaiting ratification, October 2026)\nBSc Human Biology (Hons), Oxford Brookes University, 2009\nDeep Learning with PyTorch, Keras and Tensorflow, Professional Certificate, 2025\nRegistered Scientist (RSci), Science Council, 2019\nBest in Tech Award, ASPiH National Conference, 2018"
+  },
+  {
+    "objectID": "projects/mimic-iv/index.html",
+    "href": "projects/mimic-iv/index.html",
+    "title": "Clinical prediction in intensive care",
+    "section": "",
+    "text": "In progress. Credentialed access obtained; study design under way.\n\n\n\nA clinical prediction study using MIMIC-IV, a de-identified critical care database of intensive care admissions from a US teaching hospital.\nWhat the project will involve:\n\ncohort definition and feature engineering from routinely collected ICU data\ninterpretable models evaluated on discrimination, calibration and subgroup performance\nreporting to TRIPOD+AI and held up to NHS RAP framework\na repository that runs end to end on the open MIMIC-IV demo subset, so the pipeline can be executed without credentialed access\n\nThumbnail on project page reproduced with authors’ permission under CC"
+  },
+  {
+    "objectID": "projects/oxstar-db/index.html",
+    "href": "projects/oxstar-db/index.html",
+    "title": "Taming ‘biggish’ data",
+    "section": "",
+    "text": "Write-up in progress, from work at OxSTaR, University of Oxford, based at the John Radcliffe Hospital.\n\n\n\nClinical simulation training generates awkward data: courses, faculty, candidates, equipment, feedback and outcomes, all related and all changing. Delivery was largely for NHS staff, and reporting went to NHS stakeholders, where it was used to account for how training spend translated into activity.\nThis project revisits that database design, rebuilt in SQL Server with synthetic data. The rebuild demonstrates the data model and the reporting rather than reproducing the original system.\nWhat the write-up will cover:\n\nthe data model, and why the entities were structured the way they were\nT-SQL scripts that build the schema and seed it with synthetic data, so the database runs from scratch\nthe reporting queries the centre relied on, rewritten\ninterface mockups showing how the system was used day to day, including Power BI dashbaords for interactive reports\nwhat changed operationally once the reporting existed, and what I would do differently now\n\nPaper (doi:10.1136/bmjstel-2019-000441)"
+  },
+  {
+    "objectID": "projects/smaller-projects/index.html",
+    "href": "projects/smaller-projects/index.html",
+    "title": "Smaller projects",
+    "section": "",
+    "text": "To be added.\n\n\n\nShorter pieces from the MSc, competitions and courses reworked into repositories with brief write-ups."
+  },
+  {
+    "objectID": "projects.html",
+    "href": "projects.html",
+    "title": "Projects",
+    "section": "",
+    "text": "Actigraphy and ADHD prediction\n\n\n\nclinical prediction\n\nmachine learning\n\ntime series\n\nPython\n\n\n\nFair and Interpretable machine learning on 171 million accelerometer readings and parent-questionnaire responses from the Millennium Cohort Study (MCS). MSc thesis, distinction (80/100).\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nClinical prediction in intensive care\n\n\n\nin progress\n\nclinical prediction\n\nTRIPOD+AI\n\npython\n\n\n\nPrediction modelling on de-identified ICU records, pipeline built to NHS RAP standards and reported to TRIPOD+AI.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTaming ‘biggish’ data\n\n\n\nin progress\n\nSQL\n\ndata engineering\n\nPower BI\n\nVBA\n\n\n\nSQL database design and Power BI dashboard reporting for training delivery at Oxford’s simulation centre. Published in BMJ STEL and awarded Best in Technology at ASPiH 2018.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDo health and wellbeing measures agree?\n\n\n\nin progress\n\npopulation health\n\nsurvey methods\n\nhealth economics\n\npython\n\n\n\nInstrument disagreement, transportability across survey panels, and what it means for resource allocation.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSmaller projects\n\n\n\nin progress\n\n\n\nShorter work from the MSc, competitions and courses.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWeb development and analytics\n\n\n\nin progress\n\nweb\n\nanalytics\n\n\n\nSites and analytics reporting for university, NHS, third sector and commercial clients.\n\n\n\n\n\n\n\n\nNo matching items"
+  }
+]
