@@ -1,0 +1,36 @@
+---
+title: "Taming 'biggish' data"
+subtitle: "A relational database for a clinical simulation centre"
+description: "SQL database design and Power BI dashboard reporting for training delivery at Oxford's simulation centre. Published in BMJ STEL and awarded Best in Technology at ASPiH 2018."
+date: 2026-09-01
+categories: [in progress, SQL, data engineering, Power BI, VBA]
+image: bml-stel.jpg
+---
+
+::: {.callout-note appearance="simple"}
+Write-up in progress, from work at OxSTaR, University of Oxford, based at the
+John Radcliffe Hospital.
+:::
+
+Clinical simulation training generates awkward data: courses, faculty,
+candidates, equipment, feedback and outcomes, all related and all changing.
+Delivery was largely for NHS staff, and reporting went to NHS stakeholders,
+where it was used to account for how training spend translated into activity.
+
+This project revisits that database design, rebuilt in SQL Server with
+synthetic data. The rebuild demonstrates the data model and the reporting
+rather than reproducing the original system.
+
+What the write-up will cover:
+
+- the data model, and why the entities were structured the way they were
+- T-SQL scripts that build the schema and seed it with synthetic data, so the database runs from scratch
+- the reporting queries the centre relied on, rewritten
+- interface mockups showing how the system was used day to day, including Power BI dashbaords for interactive reports
+- what changed operationally once the reporting existed, and what I would do differently now
+
+
+[Paper (doi:10.1136/bmjstel-2019-000441)](https://doi.org/10.1136/bmjstel-2019-000441)
+
+<!-- TODO: years, scale reached, original platform. ERD, schema repo link,
+     mockups. -->

@@ -1,0 +1,18 @@
+---
+title: "Smaller projects"
+subtitle: "Coursework and short pieces"
+description: "Shorter work from the MSc, competitions and courses."
+date: 2026-07-01
+categories: [in progress]
+image: autism-pred.jpg
+---
+
+::: {.callout-note appearance="simple"}
+To be added.
+:::
+
+Shorter pieces from the MSc, competitions and courses reworked into repositories with brief write-ups.
+
+<!-- TODO: pick three or four. For each: one line on the question, one on the
+     method, and a repo link. Anything needing more explanation than that
+     probably belongs as its own project page. -->

@@ -4,14 +4,35 @@ title: "Publications"
 
 ## Peer-reviewed
 
-TODO Authors. TODO Title. *BMJ Simulation & Technology Enhanced Learning*.
-TODO year. [doi:TODO](https://doi.org/TODO)
+C McDermott et al. Taming 'biggish' data. *BMJ Stel In Practice reports*.
+2019. [doi: 10.1136/bmjstel-2019-000441](https://doi.org/10.1136/bmjstel-2019-000441)
 
-## Preprints
+## Science writing
 
-<!-- TODO: add the thesis preprint once it has a DOI -->
-*Forthcoming.*
+Articles for *BioNews*, published by the [Progress Educational Trust](https://www.progress.org.uk/about-us/people/charlie-mcdermott/),
+covering developments in genetics, stem cell research and reproductive medicine
+for a general readership (2010).
 
-## Talks and awards
+## Thesis
 
-TODO: ASPiH 2018 — award name and title of the presented work.
+McDermott, C. (2026). *Impact of Temporal Structure and Duration of Actigraphy
+on ADHD Prediction with Fair and Interpretable Machine Learning*. MSc
+Computer Science with Artificial Intelligence, University of York.
+
+Machine learning on accelerometry from 5,033 children in the Millennium Cohort
+Study, testing whether intra-daily and weekly activity patterns predict ADHD,
+and how many days of monitoring are needed. Awarded 80.
+
+[Full thesis (PDF)](projects/msc-thesis/thesis.pdf) ·
+[Project write-up](projects/msc-thesis/) ·
+[Code](https://github.com/charles-mcd/predict-adhd)
+
+## Talks and workshops
+
+**Taming 'biggish' data** ASPiH National Conference, 2018. Winner, Best in
+Technology award.
+
+**Virtual Virtuoso: Online Workspaces** Workshop, OxSTaR, 2021.
+
+**Virtual Reality for Surgical Training** Workshop, Department for Continuing Education,
+University of Oxford, 2022.

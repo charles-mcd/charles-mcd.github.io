@@ -1,0 +1,38 @@
+---
+title: "Do health and wellbeing measures agree?"
+subtitle: "Comparing preference-based outcome measures across a UK population survey"
+description: "Instrument disagreement, transportability across survey panels, and what it means for resource allocation."
+date: 2026-10-01
+categories: [in progress, population health, survey methods, health economics, python]
+image: qalys.png
+---
+
+<!-- TODO: working title. Alternatives: "Same person, different score" /
+     "Transportability and equity of health utility mapping". -->
+
+::: {.callout-note appearance="simple"}
+In progress. Data access being arranged through the UK Data Service.
+:::
+
+Health and wellbeing outcome measures are used to compare treatments and to
+inform how health budgets are allocated. Several established instruments exist,
+and they do not always agree with each other about the same person. Where
+mapping functions convert between them, those functions are usually estimated
+on one survey sample and then applied elsewhere.
+
+This project uses the SIPHER-HWMIC survey, which asked over 12,000 UK adults
+the questions from eight different health and wellbeing instruments, across
+three separate survey panels.
+
+What the project will involve:
+
+- comparing scores from several preference-based instruments for the same respondents
+- testing whether mapping between instruments holds when trained on one survey panel and applied to another
+- reporting calibration as well as fit, the external-validation approach standard in clinical prediction modelling but uncommon in this literature
+- examining whether disagreement between instruments varies systematically by age, sex, socioeconomic position or health status
+- handling documented data quality problems in the survey and reporting to the MAPS statement, the mapping literature's own reporting standard
+
+<!-- TODO after access: sample size actually used, instruments compared,
+     licensing constraints on reproducing item wording, and the note that
+     SF-12v2 summary scores come from proprietary software so cannot be
+     recomputed from source. -->

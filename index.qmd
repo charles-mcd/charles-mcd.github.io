@@ -7,9 +7,6 @@ about:
   image-shape: round
   image-width: 14em
   links:
-    - icon: envelope
-      text: Email
-      href: mailto:TODO@example.com
     - icon: github
       text: GitHub
       href: https://github.com/charles-mcd
@@ -20,15 +17,14 @@ about:
       href: https://orcid.org/0000-0002-7650-6740
 ---
 
-I build clinical prediction models that can be checked: properly evaluated,
-calibrated, audited for how they perform across different patient groups, and
-reported transparently enough that someone else can reproduce them. I write
-my analyses as reproducible pipelines in line with the NHS Reproducible
+I'm a health-focused data scientist with hands-on healthcare systems experience and an 
+MSc in Computer Science with AI, focused on turning messy clinical data into equitable models and evidence.
+I write my analyses as reproducible pipelines in line with the NHS Reproducible
 Analytical Pipelines (RAP) approach and publish the code.
 
-Before moving into data science I spent eight years at OxSTaR, the simulation
-and training centre at the John Radcliffe Hospital in Oxford, building the data
-systems and technology behind clinical training. I have run an independent
+Before moving into data science I spent eight years at the University of Oxford's simulation
+training and research centre at the John Radcliffe Hospital (NHS FT), building the data
+systems and technology behind clinical training. I have run an independent digital
 consultancy since 2012.
 
 My MSc thesis used accelerometry data from the Millennium Cohort Study to
@@ -48,8 +44,10 @@ conditions
 <!-- TODO: remove "awaiting ratification" after October 2026 -->
 (awaiting ratification, October 2026)
 
-**TODO: undergraduate degree**, TODO University, TODO year
+**BSc Human Biology (Hons)**, Oxford Brookes University, 2009
 
-**Registered Scientist (RSci)**, Science Council
+**Deep Learning with PyTorch, Keras and Tensorflow**, \nIBM Professional Certificate, 2025
 
-**ASPiH 2018 award**, TODO: exact award name
+**Registered Scientist (RSci)**, Science Council, 2019
+
+**Best in Tech Award**, ASPiH National Conference, 2018

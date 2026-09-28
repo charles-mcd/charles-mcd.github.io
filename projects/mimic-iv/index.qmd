@@ -1,0 +1,29 @@
+---
+title: "Clinical prediction in intensive care"
+subtitle: "MIMIC-IV critical care database"
+description: "Prediction modelling on de-identified ICU records, pipeline built to NHS RAP standards and reported to TRIPOD+AI."
+date: 2026-09-15
+categories: [in progress, clinical prediction, TRIPOD+AI, python]
+image: flow.jpg
+---
+
+<!-- TODO: working title agreed separately - drop it into title/subtitle above. -->
+
+::: {.callout-note appearance="simple"}
+In progress. Credentialed access obtained; study design under way.
+:::
+
+A clinical prediction study using MIMIC-IV, a de-identified critical care
+database of intensive care admissions from a US teaching hospital.
+
+What the project will involve:
+
+- cohort definition and feature engineering from routinely collected ICU data
+- interpretable models evaluated on discrimination, calibration and subgroup performance
+- reporting to TRIPOD+AI and held up to NHS RAP framework
+- a repository that runs end to end on the open MIMIC-IV demo subset, so the pipeline can be executed without credentialed access
+
+Thumbnail on project page reproduced with [authors'](https://doi.org/10.1038/s41597-022-01899-x) permission under [CC](http://creativecommons.org/licenses/by/4.0/)
+
+<!-- TODO: once the design is settled, replace the bullets with the research
+     question and the planned outcome. -->

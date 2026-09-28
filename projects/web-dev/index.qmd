@@ -1,0 +1,29 @@
+---
+title: "Web development and analytics"
+subtitle: "Independent consultancy"
+description: "Sites and analytics reporting for university, NHS, third sector and commercial clients."
+date: 2026-08-01
+categories: [in progress, web, analytics]
+image: google-dashboard.jpg
+---
+
+::: {.callout-note appearance="simple"}
+Examples being gathered.
+:::
+
+Web work delivered through my consultancy since 2012, running alongside the
+NHS and research work. Clients have included university departments, NHS
+services, third sector organisations and commercial businesses, in the UK and
+internationally.
+
+What this will cover:
+
+- sites built and maintained, from brochure sites to bespoke functionality
+- analytics implementation, and the reporting built on top of it
+- turning site statistics into something a non-technical client can act on
+
+Client dashboards are reproduced here with dummy figures.
+
+<!-- TODO: which clients can be named, with permission. Two or three example
+     dashboards rebuilt with synthetic data. A short before/after on what a
+     client changed as a result of the reporting. -->
