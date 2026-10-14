@@ -6,8 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-09-01">
-<meta name="description" content="SQL database design and Power BI dashboard reporting for training delivery at Oxford’s simulation centre. Published in BMJ STEL and awarded Best in Technology at ASPiH 2018.">
+<meta name="dcterms.date" content="2026-10-14">
+<meta name="description" content="A SQL Server rebuild of the training database I designed for Oxford’s clinical simulation centre, published in BMJ STEL and awarded Best in Technology at ASPiH 2018. 16 business rules enforced by the database, with stored procedures and reporting views on NHS Data Dictionary codes.">
 
 <title>Taming ‘biggish’ data – Charlie McDermott</title>
 <style>
@@ -27,6 +27,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -76,6 +111,9 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 </head>
@@ -139,19 +177,18 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Taming ‘biggish’ data</h1>
-<p class="subtitle lead">A relational database for a clinical simulation centre</p>
+<p class="subtitle lead">Rebuilding a clinical simulation centre’s relational database in SQL Server</p>
   <div class="quarto-categories">
-    <div class="quarto-category">in progress</div>
-    <div class="quarto-category">SQL</div>
-    <div class="quarto-category">data engineering</div>
-    <div class="quarto-category">Power BI</div>
-    <div class="quarto-category">VBA</div>
+    <div class="quarto-category">SQL Server</div>
+    <div class="quarto-category">T-SQL</div>
+    <div class="quarto-category">data modelling</div>
+    <div class="quarto-category">NHS data standards</div>
   </div>
   </div>
 
 <div>
   <div class="description">
-    SQL database design and Power BI dashboard reporting for training delivery at Oxford’s simulation centre. Published in BMJ STEL and awarded Best in Technology at ASPiH 2018.
+    A SQL Server rebuild of the training database I designed for Oxford’s clinical simulation centre, published in BMJ STEL and awarded Best in Technology at ASPiH 2018. 16 business rules enforced by the database, with stored procedures and reporting views on NHS Data Dictionary codes.
   </div>
 </div>
 
@@ -162,7 +199,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 1, 2026</p>
+      <p class="date">October 14, 2026</p>
     </div>
   </div>
   
@@ -174,31 +211,284 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<!-- Check: "designed, built and maintained ... in MS Access" matches your CV. Add years in production or scale reached here if you want them. -->
+<p>Clinical simulation training generates awkward data: courses, faculty, candidates, equipment, feedback and outcomes, all related and all changing. At OxSTaR, the University of Oxford’s simulation centre at the John Radcliffe Hospital, delivery was largely for NHS staff, and reporting went to NHS stakeholders, where it was used to account for how training spend translated into activity. I designed, built and maintained the MS Access database behind that reporting.</p>
+<p>This project revisits that database design, rebuilt from scratch in T-SQL on SQL Server. The rebuild demonstrates the data model and the reporting rather than reproducing the original system: a schema built around NHS Data Dictionary code lists, business rules enforced by the database itself rather than the forms in front of it, a write path of stored procedures, and reporting views for the questions a centre’s leads ask. The trust, its people and all of the data are synthetic, and no code or data from the original system is used.</p>
 <div class="callout callout-style-simple callout-note">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p>Write-up in progress, from work at OxSTaR, University of Oxford, based at the John Radcliffe Hospital.</p>
+<p><strong>OxSTaR, University of Oxford</strong>, John Radcliffe Hospital. The original system was published in BMJ STEL and awarded Best in Technology at ASPiH 2018.</p>
+<p>SQL Server 2025 · T-SQL · SSMS · 16 business rules enforced by the database · 7 write procedures · 5 reporting views and 2 reporting procedures</p>
+<!-- Check the repo URL once pushed. -->
+<p><a href="https://doi.org/10.1136/bmjstel-2019-000441">Paper (doi:10.1136/bmjstel-2019-000441)</a> · <a href="https://github.com/charles-mcd/healthcare-training-db">Code</a> · <a href="https://github.com/charles-mcd/healthcare-training-db/blob/main/docs/design.md">Design</a> · <a href="https://github.com/charles-mcd/healthcare-training-db/blob/main/docs/data-dictionary.md">Data dictionary</a></p>
 </div>
 </div>
 </div>
-<p>Clinical simulation training generates awkward data: courses, faculty, candidates, equipment, feedback and outcomes, all related and all changing. Delivery was largely for NHS staff, and reporting went to NHS stakeholders, where it was used to account for how training spend translated into activity.</p>
-<p>This project revisits that database design, rebuilt in SQL Server with synthetic data. The rebuild demonstrates the data model and the reporting rather than reproducing the original system.</p>
-<p>What the write-up will cover:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    SG[staff_group] --&gt; JR[job_role]
+    JR --&gt; P[person]
+    ORG[organisation] --&gt; DIV[division] --&gt; SU[service_unit]
+    ORG --&gt; P
+    SU -.-&gt; P
+    C[course] --&gt; S[session]
+    P --&gt; SP[session_participant]
+    S --&gt; SP
+    SP --&gt; F[feedback]
+    SP --&gt; R[rpt views&lt;br/&gt;and procedures]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>Arrows run from parent to child table; the dotted arrow is optional, as partner staff have no unit.</p>
+<!-- Tag the release as v1.0.0 after pushing, or delete the second sentence. -->
+<p>The design document sets out every table, rule and report in full; this page covers the highlights. The build described here is tagged <a href="https://github.com/charles-mcd/healthcare-training-db/tree/v1.0.0">v1.0.0</a>.</p>
+<section id="from-requirements-to-rules" class="level2">
+<h2 class="anchored" data-anchor-id="from-requirements-to-rules">1. From requirements to rules</h2>
+<blockquote class="blockquote">
+<p>The centre’s leads described what they needed in plain terms: know who attended and who didn’t, never overbook a course, report staff in the role they held at the time, and use national codes so the numbers mean the same thing everywhere. Each requirement was translated into a rule and enforced at the lowest layer of the database able to hold it: column types and NOT NULL first, then keys, then CHECK constraints, with a trigger and stored procedures reserved for rules that depend on other rows or tables.</p>
+</blockquote>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>The centre needs</th>
+<th>Rule</th>
+<th>Enforced by</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>job roles recorded in national terms</td>
+<td>job roles use NHS Data Dictionary codes, each within its staff group</td>
+<td>foreign keys to the code lists, and a CHECK on the code</td>
+</tr>
+<tr class="even">
+<td>cancellations explained</td>
+<td>a cancelled session carries a reason</td>
+<td>CHECK constraint</td>
+</tr>
+<tr class="odd">
+<td>one person leading each session</td>
+<td>one lead faculty per session</td>
+<td>filtered unique index</td>
+</tr>
+<tr class="even">
+<td>feedback only from people who were there</td>
+<td>feedback only from attendees</td>
+<td>composite foreign key through a persisted computed column</td>
+</tr>
+<tr class="odd">
+<td>no course overbooked</td>
+<td>no booking over capacity or onto a cancelled session</td>
+<td>stored procedure, with a trigger as backstop</td>
+</tr>
+<tr class="even">
+<td>staff reported in the role they held at the time</td>
+<td>each booking keeps the role held when it was made</td>
+<td>the booking procedure copies the role onto the booking</td>
+</tr>
+</tbody>
+</table>
+<p>Each layer rejects a bad row with an error that names what was broken. The script behind this screenshot tries to break five rules, one per layer, inside transactions that are rolled back:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="rules-errors.png" class="img-fluid figure-img"></p>
+<figcaption>Five rules broken, five errors: a CHECK constraint (547), a filtered unique index (2601), a foreign key (547), the booking procedure (50010) and the trigger backstop (50010)</figcaption>
+</figure>
+</div>
+<p><strong>Rules summary:</strong></p>
 <ul>
-<li>the data model, and why the entities were structured the way they were</li>
-<li>T-SQL scripts that build the schema and seed it with synthetic data, so the database runs from scratch</li>
-<li>the reporting queries the centre relied on, rewritten</li>
-<li>interface mockups showing how the system was used day to day, including Power BI dashbaords for interactive reports</li>
-<li>what changed operationally once the reporting existed, and what I would do differently now</li>
+<li>16 rules in all, listed in the <a href="https://github.com/charles-mcd/healthcare-training-db/blob/main/docs/design.md#rules">design</a> with the error each one raises</li>
+<li>every constraint is named for what it enforces (<code>ck_</code>, <code>fk_</code>, <code>ux_</code> and so on), so an error message names the rule that was broken</li>
+<li>built-in error numbers (547, 2601, 2627) and custom ones (50001 to 50021) give a front end fixed codes to map to friendly messages</li>
+<li>rules that depend on another table, such as host-trust staff needing a service unit, sit in the procedures that write the data</li>
 </ul>
-<p><a href="https://doi.org/10.1136/bmjstel-2019-000441">Paper (doi:10.1136/bmjstel-2019-000441)</a></p>
-<!-- TODO: years, scale reached, original platform. ERD, schema repo link,
-     mockups. -->
+</section>
+<section id="schema-design" class="level2">
+<h2 class="anchored" data-anchor-id="schema-design">2. Schema design</h2>
+<blockquote class="blockquote">
+<p>Three schemas separate the code lists (<code>ref</code>), the operational tables (<code>core</code>) and the reporting layer (<code>rpt</code>). Staff groups and job roles use the national codes from the <a href="https://www.datadictionary.nhs.uk/attributes/job_role_code.html">NHS Data Model and Dictionary</a>, loaded with their source and retrieval date, so a staff group in a report means what it means nationally. Keys do more than identify rows: composite foreign keys keep related records inside the same organisation, and filtered unique indexes express rules that only apply to some rows.</p>
+</blockquote>
+<p>The booking table uses both. The unit copied onto a booking must belong to the organisation copied with it, and only the lead’s row must be unique per session:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>206_core_session_participant.sql</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-filename="206_core_session_participant.sql"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> core.session_participant</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- ...</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CONSTRAINT</span> fk_session_participant_service_unit <span class="kw">FOREIGN</span> <span class="kw">KEY</span> (organisation_id, service_unit_id)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">REFERENCES</span> core.service_unit (organisation_id, service_unit_id)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">NO</span> ACTION</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">UNIQUE</span> NONCLUSTERED <span class="kw">INDEX</span> ux_session_participant_session_id_lead</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> core.session_participant (session_id)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> role_code <span class="op">=</span> <span class="st">'LEAD'</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="object-explorer1.png" class="img-fluid figure-img"></p>
+<figcaption>Object Explorer: keys, constraints, indexes and the trigger on the booking table, each named for what it enforces</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="object-explorer2.png" class="img-fluid"></p>
+</div>
+</div>
+</div>
+<p><strong>Schema summary:</strong></p>
+<ul>
+<li>10 staff groups and the 34 job roles in use, from the NHS Data Dictionary; a CHECK ties each job role code to its staff group through its first two characters</li>
+<li>composite foreign keys stop a person or booking pointing at a unit in another organisation; the UNIQUE keys that look redundant are there as their targets</li>
+<li>filtered unique indexes handle conditional uniqueness: one host trust, one lead per session, and email unique only when it’s given</li>
+<li>every foreign key is indexed on the child side, which SQL Server doesn’t do automatically, and none cascade, so deleting a parent can’t erase history</li>
+</ul>
+</section>
+<section id="the-write-path" class="level2">
+<h2 class="anchored" data-anchor-id="the-write-path">3. The write path</h2>
+<blockquote class="blockquote">
+<p>Every write is designed to go through a stored procedure. Each runs in a transaction with XACT_ABORT ON and TRY/CATCH, so any error rolls back all of its work and reaches the caller with its original number. Booking is the most demanding case: two people booking the last place at the same moment must not both succeed, and the booking has to record the person’s role as it stands that day.</p>
+</blockquote>
+<p>The booking procedure locks the session row before counting places, so concurrent bookings for the same session wait their turn rather than race:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>305_core_usp_book_participant.sql</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-filename="305_core_usp_book_participant.sql"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> @status_code <span class="op">=</span> s.status_code,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>       @capacity    <span class="op">=</span> s.capacity</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> core.<span class="kw">session</span> <span class="kw">AS</span> s <span class="kw">WITH</span> (UPDLOCK, HOLDLOCK)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> s.session_id <span class="op">=</span> @session_id;</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="cf">IF</span> @status_code <span class="op">=</span> <span class="st">'X'</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    THROW <span class="dv">50011</span>, N<span class="st">'The session is cancelled.'</span>, <span class="dv">1</span>;</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="cf">IF</span> @role_code <span class="op">=</span> <span class="st">'DEL'</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="cf">BEGIN</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> @booked <span class="op">=</span> <span class="fu">COUNT</span>(<span class="op">*</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> core.session_participant <span class="kw">AS</span> sp</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> sp.session_id <span class="op">=</span> @session_id</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      <span class="kw">AND</span> sp.role_code <span class="op">=</span> <span class="st">'DEL'</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>      <span class="kw">AND</span> sp.outcome_code <span class="op">&lt;&gt;</span> <span class="st">'X'</span>;</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">IF</span> @booked <span class="op">&gt;=</span> @capacity</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        THROW <span class="dv">50010</span>, N<span class="st">'The session is full.'</span>, <span class="dv">1</span>;</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="cf">END</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The same procedure copies the person’s organisation, job role and unit onto the booking, so when someone is promoted, their earlier bookings keep the role they held at the time:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="role-at-the-time.png" class="img-fluid figure-img"></p>
+<figcaption>One person either side of a promotion: each booking keeps the job role held when it was made</figcaption>
+</figure>
+</div>
+<p><strong>Write path summary:</strong></p>
+<ul>
+<li>seven procedures cover every write: adding a person, changing their role, creating, cancelling and booking sessions, recording attendance and adding feedback</li>
+<li><code>UPDLOCK, HOLDLOCK</code> on the session row makes bookings for the same session queue, so two can’t both take the last place</li>
+<li>a trigger repeats the capacity check as a backstop for any write that bypasses the procedure</li>
+<li>copying the role at booking gives point-in-time reporting from a single table</li>
+</ul>
+</section>
+<section id="reporting" class="level2">
+<h2 class="anchored" data-anchor-id="reporting">4. Reporting</h2>
+<blockquote class="blockquote">
+<p>The reporting layer gives analysts a stable set of views over the operational tables, with the definitions written into the views rather than left to each query: rates count delegates only, cancelled places are excluded, the DNA rate is did-not-attend over attended plus did-not-attend, and dates map to NHS financial years and quarters through a date table. Staff groups come from the booking, so a report on last year shows staff as they were last year.</p>
+</blockquote>
+<p>DNA rates by staff group and financial quarter come from a CTE that does the counting and a window function that compares each quarter with the one before:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>530_rpt_v_dna_by_staff_group.sql</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-filename="530_rpt_v_dna_by_staff_group.sql"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    fy_quarter_label,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    staff_group_code,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    staff_group,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    delegates_due,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    dnas,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">CAST</span>(dna_rate <span class="kw">AS</span> <span class="dt">decimal</span>(<span class="dv">5</span>, <span class="dv">1</span>)) <span class="kw">AS</span> dna_rate_pct,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- LAG reads the same staff group's previous quarter; it is empty for the first one.</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">CAST</span>(dna_rate <span class="op">-</span> <span class="fu">LAG</span>(dna_rate) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> staff_group_code <span class="kw">ORDER</span> <span class="kw">BY</span> fy_label, fy_quarter)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>         <span class="kw">AS</span> <span class="dt">decimal</span>(<span class="dv">5</span>, <span class="dv">1</span>)) <span class="kw">AS</span> dna_rate_change_pts</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> quarterly;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="dna-by-staff-group.png" class="img-fluid figure-img"></p>
+<figcaption>DNA rate by staff group, summed from the view across all quarters. Staff group 03’s higher rate is seeded into the synthetic data to exercise the report; it is not a finding.</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="session-register.png" class="img-fluid figure-img"></p>
+<figcaption>Session register: GROUP BY ROLLUP adds a subtotal for each staff group and a total for the session</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="faculty-load.png" class="img-fluid figure-img"></p>
+<figcaption>Faculty teaching load in 2025/26, ranked with RANK so equal counts share a place</figcaption>
+</figure>
+</div>
+<p><strong>Reporting summary:</strong></p>
+<ul>
+<li><code>rpt.v_participation</code> is the base view: one row per booking, with course, organisation, division and the staff group held at the time</li>
+<li>session fill and DNA rates, DNA trends by staff group and quarter, faculty load and the session register, built with CTEs, conditional aggregation, <code>NULLIF</code> against divide-by-zero, <code>LAG</code>, <code>RANK</code> and <code>GROUP BY ROLLUP</code></li>
+<li>a name search matches the start of a name with <code>LIKE</code> and similar-sounding surnames with <code>SOUNDEX</code></li>
+<li><code>rpt.dim_date</code> maps every day from April 2022 to March 2027 to its NHS financial year and quarter</li>
+</ul>
+</section>
+<section id="build-and-documentation" class="level2">
+<h2 class="anchored" data-anchor-id="build-and-documentation">5. Build and documentation</h2>
+<blockquote class="blockquote">
+<p>The database is built entirely from code. One command drops and recreates it from <code>master</code>, runs the SQL files in numbered order, loads the national code lists and the calendar, then generates the synthetic data, so anyone with SQL Server can rebuild the same database.</p>
+</blockquote>
+<!-- Replace each [n] with the numbers from your build output. -->
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>python scripts/build.py</strong></pre>
+</div>
+<pre class="text" data-filename="python scripts/build.py"><code>Running 000_database.sql
+Running 010_schema_ref.sql
+...
+Running 570_core_usp_find_person.sql
+Loading staff_group.csv
+Loading job_role.csv
+Loading the calendar
+Synthetic data: 2200 people, 650 sessions, [n] delegate rows, [n] faculty rows, [n] feedback
+Build complete</code></pre>
+</div>
+<p><strong>Build summary:</strong></p>
+<ul>
+<li>one object per file, numbered in build order, with every constraint named</li>
+<li>national code lists stored as CSV with their source and retrieval date; NHS England content is excluded from the code’s MIT licence</li>
+<li>synthetic data from a fixed seed: 2,200 staff across seven organisations and 650 sessions of 40 courses, April 2023 to December 2026, inserted through the same constraints and trigger as any other write</li>
+<li>two patterns are seeded to exercise the reports: a higher DNA rate in staff group 03, and about 5% of staff changing role part-way through</li>
+<li>every table and column carries a description, from which <code>scripts/data_dictionary.py</code> generates the <a href="https://github.com/charles-mcd/healthcare-training-db/blob/main/docs/data-dictionary.md">data dictionary</a></li>
+<li>the <a href="https://github.com/charles-mcd/healthcare-training-db/blob/main/docs/screenshot_queries.sql">queries behind each screenshot</a> are in the repo</li>
+</ul>
+<p><strong>Next:</strong> a Power BI report on the <code>rpt</code> views.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
