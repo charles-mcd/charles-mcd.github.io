@@ -41,8 +41,6 @@ conditions
 ## Education and recognition
 
 **MSc Computer Science with Artificial Intelligence**, University of York, 2026
-<!-- TODO: remove "awaiting ratification" after October 2026 -->
-(awaiting ratification, October 2026)
 
 **BSc Human Biology (Hons)**, Oxford Brookes University, 2009
 
